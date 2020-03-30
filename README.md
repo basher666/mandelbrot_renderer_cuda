@@ -6,8 +6,7 @@ A simple CUDA implementation of the escape time algorithm for mandelbrot set. Ge
 
 ## Usage
 
-> make
-> make run
+> make && make run
 
 ## Machine Details
 
