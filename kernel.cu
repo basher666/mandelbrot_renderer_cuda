@@ -31,30 +31,27 @@ __global__ void mandelbrot_kernel(int *canvas, int *num_it, double l_margin, dou
 	else
 	{
 		double mod = z_n_x*z_n_x + z_n_y*z_n_y;
-		// canvas[idx] = escape_time - log(log(mod))/log(2.0);
-		canvas[idx] = (int)(((double)escape_time/(double) N)*255.0);
+		canvas[idx] = (int)(((escape_time - log(log(mod))/log(2.0))/(double)N)*255.0);
+		// canvas[idx] = (int)(((double)escape_time/(double) N)*255.0);
 	}
 	num_it[idx] = escape_time;
 }
 
-void render(double center_x, double center_y, double init_len, double zoom_limit)
+void render(int *h_canvas,long double center_x,long double center_y, double init_len, int dim_x, int dim_y)
 {
 	cudaError_t err = cudaSuccess;
-	int dim_x = 1024;
-	int dim_y = 1024;
-
+	
 	double l_margin = center_x - init_len/2.0;
-	double r_margin = center_x - init_len/2.0;
+	double r_margin = center_x + init_len;
 	double u_margin = center_y + init_len/2.0;
-	double d_margin = center_y + init_len/2.0;
+	double d_margin = center_y - init_len/2.0;
 	int N = 64;
 	dim3 threads_per_block(32,32,1);
 	dim3 blocks_per_grid(dim_x/32,dim_y/32,1);
 	
 	size_t canvas_size =  dim_x*dim_y*sizeof(int);
 
-	int *h_canvas = (int *)malloc(sizeof(int)*dim_x*dim_y);
-	memset(h_canvas, 0, dim_x*dim_y*sizeof(int));
+	
 
 	int *h_num_it = (int*)malloc(canvas_size);
 	memset(h_num_it, 0, canvas_size);
@@ -98,8 +95,8 @@ void render(double center_x, double center_y, double init_len, double zoom_limit
 		exit(EXIT_FAILURE);
 	}
 
-	printf("Getting the canvas back from kernel\n");
-	fflush(stdout);
+	// printf("Getting the canvas back from kernel\n");
+	// fflush(stdout);
 
 	err = cudaMemcpy(h_canvas, d_canvas, canvas_size, cudaMemcpyDeviceToHost);
 	if(err!=cudaSuccess)
@@ -115,8 +112,8 @@ void render(double center_x, double center_y, double init_len, double zoom_limit
 		exit(EXIT_FAILURE);
 	}
 
-	printf("Freeing device memory\n");
-	fflush(stdout);
+	// printf("Freeing device memory\n");
+	// fflush(stdout);
 	err = cudaFree(d_canvas);
 	if(err!=cudaSuccess)
 	{
@@ -157,26 +154,5 @@ void render(double center_x, double center_y, double init_len, double zoom_limit
 	// printf("max it:%d, min_it:%d, outside_count:%d, avg_it:%lf",max_esc, min_esc, outside_count, avg_esc);
 
 
-	printf("Writing the rendered image\n");
-	fflush(stdout);
-	FILE* img = fopen("mandelbrot.pgm", "wb");
-	(void )(void) fprintf(img, "P6\n%d %d\n255\n", dim_x, dim_y);
-	printf("Writing RGB values ...\n");
-	fflush(stdout);
-
-	for(int i=0;i<dim_y;i++)
-	{
-		for(int j=0;j<dim_x;j++)
-		{
-			unsigned char tmp[3];
-			tmp[0] = 0;
-			tmp[1] = (char)h_canvas[i*dim_x + j];
-			tmp[2] = 0;
-			(void) fwrite(tmp, 1, 3, img);
-		}
-	}
-	if (img==NULL)
-		printf("img is NULL\n");
-	(void) fclose(img);
-	free(h_canvas);
+	
 }
