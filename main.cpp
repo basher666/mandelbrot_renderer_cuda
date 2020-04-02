@@ -7,9 +7,10 @@
 using namespace std;
 int main()
 {
-	double center_x = -1.749998410993740817490024831624283934528;
-	double center_y = -0.0000000000000016571246929541;
-	printf("Centre : %lf + i %lf",center_x,center_y);
+	double center_x = -0.73985494;
+	double center_y = 0.16362172;
+	printf("Centre : %lf + i %lf \n",center_x,center_y);
+	fflush(stdout);
 	int dim_x = 1024;
 	int dim_y = 1024;
 	size_t canvas_size =  dim_x*dim_y*sizeof(int);

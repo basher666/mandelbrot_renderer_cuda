@@ -45,7 +45,7 @@ void render(int *h_canvas,long double center_x,long double center_y, double init
 	double r_margin = center_x + init_len;
 	double u_margin = center_y + init_len/2.0;
 	double d_margin = center_y - init_len/2.0;
-	int N = 64;
+	int N = 255;
 	dim3 threads_per_block(32,32,1);
 	dim3 blocks_per_grid(dim_x/32,dim_y/32,1);
 	
