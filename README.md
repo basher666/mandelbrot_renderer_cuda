@@ -2,7 +2,7 @@
 
 My lazy CUDA implementation of the escape time algorithm with renormalization for zooming into the mandelbrot set. Generates 1024x1024 .pgm files as frame output. The the script uses ffmpeg to convert them to a video. Since .pgm files stores the raw matrix as image, the generated images can take up to 30 gbs ! (Need to fix this later) 
 
-![Mandelbrot Set Zooming](mandelbrot.gif)
+![Mandelbrot Set Zooming](mandelbrot_zoom.gif)
 
 ## Usage
 
