@@ -1,17 +1,22 @@
-## Mandelbrot renderer in CUDA
+## Mandelbrot renderer in CUDA and OpenMP
 
-My lazy CUDA implementation of the escape time algorithm with renormalization for zooming into the mandelbrot set. Generates 1024x1024 .pgm files as frame output. The the script uses ffmpeg to convert them to a video. Since .pgm files stores the raw matrix as image, the generated images can take up to 30 gbs ! (Need to fix this later) 
+My implementation of the escape time algorithm for zooming into the mandelbrot set. Anti-aliasing is done by supersampling using median filter, by default it dumps the original rendered image as well as the anti-aliased image. The the script uses ffmpeg to convert them to a video. MPFR is used in the cpu implementation for arbitrary precision.
 
 ![Mandelbrot Set Zooming](mandelbrot_zoom.gif)
 
 ## Usage
-
+For making the video
 ~~~~
 mkdir frames
-make
-make run
+make gpu_render # or make cpu_render
+make gpu_run  # or make cpu_run
 ./make_video.sh
 ~~~~
+To generate the colour palette, make necessary changes in the gen_colour_palette.py and then run 
+~~~~
+python gen_colour_palette.py
+~~~~
+It generates the colour_palette.h file used by the cuda/c++ code.
 
 ## Machine Details
 
